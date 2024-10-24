@@ -35,9 +35,9 @@ function Preflight({ form, dispatch, setNext }: CompProps) {
 
 useEffect(() => {
   const urlParams = new URLSearchParams(window.location.search);
-  const invitationCode = urlParams.get("invitationCode"); // 从URL获取邀请码参数
+  const invitationCode = urlParams.get("invitationCode"); 
 
-  // 仅当invitationCode存在时，才会更新表单中的invitationCode字段
+  
   if (invitationCode) {
     dispatch({
       type: "update:invitationCode",
@@ -128,12 +128,11 @@ useEffect(() => {
       />
        
        
-       
-      {/* 邀请码输入框 */}
-      <Label>邀请码</Label> {/* 无需i18n */}
+
+      <Label>邀请码</Label> 
       <Input
         placeholder={"请输入你的邀请码 (可选)"}
-        value={form.invitationCode} // 需要在表单状态中添加 invitationCode
+        value={form.invitationCode} 
         onChange={(e) =>
           dispatch({
             type: "update:invitationCode",
