@@ -15,6 +15,7 @@ type RegisterForm struct {
 	Password string `form:"password" binding:"required"`
 	Email    string `form:"email" binding:"required"`
 	Code     string `form:"code"`
+	InvitationCode     string `form:"invitationCode"`
 }
 
 type VerifyForm struct {
@@ -69,6 +70,46 @@ func GetUserByCtx(c *gin.Context) *User {
 		Username: user,
 	}
 }
+
+
+func GetInvitationCodeAPI(c *gin.Context) {
+    // 从查询参数中获取用户名
+    username := strings.TrimSpace(c.Query("username"))
+    if len(username) == 0 {
+        c.JSON(200, gin.H{
+            "status": false,
+            "error":  "username is required",
+        })
+        return
+    }
+
+    db := utils.GetDBFromContext(c)
+
+    // 根据用户名查询用户
+    var invitationCode string
+    err := db.QueryRow(`
+        SELECT invitationCode FROM auth WHERE username = ?
+    `, username).Scan(&invitationCode)
+
+    if err != nil {
+        c.JSON(200, gin.H{
+            "status": false,
+            "error":  "发生了不知道什么错误",
+        })
+        return
+    }
+
+    // 返回邀请码
+    c.JSON(200, gin.H{
+        "status":         true,
+        "invitationCode": invitationCode,
+    })
+}
+
+
+
+
+
 
 func RequireAuth(c *gin.Context) *User {
 	user := GetUserByCtx(c)
