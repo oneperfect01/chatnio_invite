@@ -19,6 +19,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { appLogo, appName } from "@/conf/env.ts";
 import { infoMailSelector } from "@/store/info.ts";
 
+import { useEffect } from "react"; 
+
 type CompProps = {
   form: RegisterForm;
   dispatch: React.Dispatch<any>;
@@ -28,6 +30,23 @@ type CompProps = {
 
 function Preflight({ form, dispatch, setNext }: CompProps) {
   const { t } = useTranslation();
+
+
+
+useEffect(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const invitationCode = urlParams.get("invitationCode"); // 从URL获取邀请码参数
+
+  // 仅当invitationCode存在时，才会更新表单中的invitationCode字段
+  if (invitationCode) {
+    dispatch({
+      type: "update:invitationCode",
+      payload: invitationCode,
+    });
+  }
+}, [dispatch]);
+
+
 
   const onSubmit = () => {
     if (
@@ -39,6 +58,8 @@ function Preflight({ form, dispatch, setNext }: CompProps) {
 
     setNext(true);
   };
+  
+  
 
   return (
     <div className={`auth-wrapper`}>
@@ -105,6 +126,22 @@ function Preflight({ form, dispatch, setNext }: CompProps) {
           })
         }
       />
+       
+       
+       
+      {/* 邀请码输入框 */}
+      <Label>邀请码</Label> {/* 无需i18n */}
+      <Input
+        placeholder={"请输入你的邀请码 (可选)"}
+        value={form.invitationCode} // 需要在表单状态中添加 invitationCode
+        onChange={(e) =>
+          dispatch({
+            type: "update:invitationCode",
+            payload: e.target.value,
+          })
+        }
+      />
+       
 
       <Button className={`mt-2`} onClick={onSubmit}>
         {t("auth.next-step")}
@@ -121,6 +158,7 @@ function doFormat(form: RegisterForm): RegisterForm {
     repassword: form.repassword.trim(),
     email: form.email.trim(),
     code: form.code.trim(),
+    invitationCode:form.invitationCode.trim(),
   };
 }
 
@@ -232,6 +270,7 @@ function Register() {
     repassword: "",
     email: "",
     code: "",
+    invitationCode:"", // 添加邀请码字段
   });
 
   return (
@@ -278,3 +317,4 @@ function Register() {
 }
 
 export default Register;
+
