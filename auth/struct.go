@@ -18,6 +18,7 @@ type User struct {
 	Level        int        `json:"level"`
 	Subscription *time.Time `json:"subscription"`
 	Banned       bool       `json:"is_banned"`
+	Usercode     string     `json:"usercode"`
 }
 
 func GetUserById(db *sql.DB, id int64) *User {
