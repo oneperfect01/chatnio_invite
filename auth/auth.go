@@ -10,12 +10,26 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"math/rand"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 )
+
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+func GenerateInvitationCode(n int) string {
+	rand.Seed(time.Now().UnixNano())
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
+}
+
+
 
 func ParseToken(c *gin.Context, token string) *User {
 	instance, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
@@ -58,6 +72,11 @@ func ParseApiKey(c *gin.Context, key string) *User {
 
 	return &user
 }
+
+
+
+
+
 
 func getCode(c *gin.Context, cache *redis.Client, email string) string {
 	code, err := cache.Get(c, fmt.Sprintf("nio:otp:%s", email)).Result()
@@ -112,6 +131,7 @@ func SignUp(c *gin.Context, form RegisterForm) (string, error) {
 	password := strings.TrimSpace(form.Password)
 	email := strings.TrimSpace(form.Email)
 	code := strings.TrimSpace(form.Code)
+	invitationCode := strings.TrimSpace(form.InvitationCode)
 
 	enableVerify := channel.SystemInstance.IsMailValid()
 
@@ -148,16 +168,32 @@ func SignUp(c *gin.Context, form RegisterForm) (string, error) {
 		Email:    email,
 		BindID:   getMaxBindId(db) + 1,
 		Token:    utils.Sha2Encrypt(email + username),
+		Usercode : GenerateInvitationCode(6),
 	}
 
 	if _, err := globals.ExecDb(db, `
-			INSERT INTO auth (username, password, email, bind_id, token)
-			VALUES (?, ?, ?, ?, ?)
-			`, user.Username, user.Password, user.Email, user.BindID, user.Token); err != nil {
+			INSERT INTO auth (username, password, email, bind_id, token, invitationCode)
+			VALUES (?, ?, ?, ?, ?, ?)
+			`, user.Username, user.Password, user.Email, user.BindID, user.Token, user.Usercode); err != nil {
 		return "", err
 	}
 
 	user.CreateInitialQuota(db)
+		// 如果邀请码非空，进行邀请码的相关处理
+	if invitationCode != "" {
+		// 查询 `auth` 表中是否存在该邀请码
+		var inviterUserID int64
+		err := globals.QueryRowDb(db, "SELECT id FROM auth WHERE invitationcode = ?", invitationCode).Scan(&inviterUserID)
+		if err == nil { // 如果找到邀请码对应的用户
+			inviteruser := &User{ID: inviterUserID}
+			// 增加邀请者的积分
+			inviteruser.IncreaseQuota(db, 10)
+			usernew := &User{ID: user.GetID(db)}
+			// // 增加被邀请者的积分
+			usernew.IncreaseQuota(db, 5)
+		}
+	}
+	
 	return user.GenerateToken()
 }
 
