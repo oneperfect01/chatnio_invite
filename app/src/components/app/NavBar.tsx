@@ -22,8 +22,8 @@ import { appLogo } from "@/conf/env.ts";
 import Announcement from "@/components/app/Announcement.tsx";
 
 
-import { getInviteCode } from "@/api/invite.ts"; // 邀请码API
-import { copyClipboard } from "@/utils/dom.ts"; // 引入复制到剪贴板工具函数
+import { getInviteCode } from "@/api/invite.ts"; 
+import { copyClipboard } from "@/utils/dom.ts"; 
 
 function NavMenu() {
   const username = useSelector(selectUsername);
@@ -46,7 +46,7 @@ function InviteCodeSection({ username }: { username: string }){
   const [loading, setLoading] = useState<boolean>(false);
   const { t } = useTranslation();
 
-  // 获取邀请码
+
   useEffect(() => {
     if (username) {
       setLoading(true);
@@ -60,16 +60,14 @@ function InviteCodeSection({ username }: { username: string }){
 
 
 
-  // 生成包含邀请码的链接
   const generateInviteLink = () => {
-    const baseURL = window.location.origin;  // 获取当前页面的 baseURL
+    const baseURL = window.location.origin;  
     return `${baseURL}/register/?invitationCode=${inviteCode}`;
   };
 
 
 
 
-  // 复制邀请码到剪贴板
   const handleCopyInviteCode = async () => {
   const inviteCode = generateInviteLink();
     if (inviteCode) {
@@ -130,7 +128,7 @@ function NavBar() {
         />
         <div className={`grow`} />
         <p>点击复制邀请码：</p>
-<InviteCodeSection username={username} /> {/* 显示邀请码部分 */}
+<InviteCodeSection username={username} /> 
         
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <Announcement />
