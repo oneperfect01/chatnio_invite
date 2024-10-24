@@ -82,7 +82,7 @@ function InviteCodeSection({ username }: { username: string }){
     }
   };
 
-  if (loading) return <div>{t('加载中...')}</div>;
+  if (loading) return <div>'加载中...'</div>;
  
  
   return (
