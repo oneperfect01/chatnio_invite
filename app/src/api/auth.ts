@@ -29,6 +29,7 @@ export type RegisterForm = {
   repassword: string;
   email: string;
   code: string;
+  invitationCode: string;
 };
 
 export type RegisterResponse = {
