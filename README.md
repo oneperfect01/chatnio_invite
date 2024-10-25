@@ -1,3 +1,23 @@
+# 使用方法
+备份原来mysql
+
+克隆仓库
+
+打包dcoker
+
+修改compose文件，把chatnio改为自己打包的docker
+
+启动容器
+
+进入mysql，把1025.sql的sql指令挨个执行一遍
+
+重启容器
+
+结束
+
+
+
+
 <div align="center">
 
 ![chatnio](/app/public/logo.png)
