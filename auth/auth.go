@@ -186,6 +186,15 @@ func SignUp(c *gin.Context, form RegisterForm) (string, error) {
 		err := globals.QueryRowDb(db, "SELECT id FROM auth WHERE invitationcode = ?", invitationCode).Scan(&inviterUserID)
 		if err == nil { // 如果找到邀请码对应的用户
 			inviteruser := &User{ID: inviterUserID}
+
+		        // 插入到 invitation 表
+		        _, err = globals.ExecDb(db, `
+		            INSERT INTO invite_info (inviteid, invitequot, userid, userquot, created_at)
+		            VALUES (?, ?, ?, ?, NOW())
+		            `, inviterUserID, 10, user.GetID(db), 5)
+		        if err != nil {
+		            return "", err
+		        }
 			// 增加邀请者的积分
 			inviteruser.IncreaseQuota(db, 10)
 			usernew := &User{ID: user.GetID(db)}
