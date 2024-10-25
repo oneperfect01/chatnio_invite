@@ -168,7 +168,7 @@ func SignUp(c *gin.Context, form RegisterForm) (string, error) {
 		Email:    email,
 		BindID:   getMaxBindId(db) + 1,
 		Token:    utils.Sha2Encrypt(email + username),
-		Usercode : GenerateInvitationCode(6),
+		Usercode : GenerateInvitationCode(8),
 	}
 
 	if _, err := globals.ExecDb(db, `
