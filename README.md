@@ -1,15 +1,15 @@
 # 使用方法
-备份原来mysql
 
-克隆仓库
+1、修改原来的docker-compose.yaml文件
 
-打包dcoker
+修改那个chatnio的地址为opaochat/opaonio:latest
+```
+chatnio:
+      image: opaochat/opaonio:latest
+      container_name: chatnio
+```
 
-修改compose文件，把chatnio改为自己打包的docker
-
-启动容器
-
-进入mysql，把1025.sql的sql指令挨个执行一遍
+2、进入mysql，把本项目下面的1025.sql的sql指令挨个执行一遍
 
 重启容器
 
