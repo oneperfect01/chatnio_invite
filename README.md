@@ -15,7 +15,10 @@ chatnio:
 
 结束
 
-
+#  感谢原项目
+[chatnio](https://github.com/zmh-program/chatnio)
+<details>
+<summary>原项目信息</summary>
 
 
 <div align="center">
@@ -233,3 +236,7 @@ Thus, **Chat Nio** was born. We hope to create a project that has both a powerfu
 ## ❤ Donations
 
 If you find this project helpful, you can give it a Star to show your support!
+
+
+
+</details>
