@@ -18,6 +18,6 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/opaonio:$(date +%Y%m%d)
-          docker push ${{ secrets.DOCKER_USERNAME }}/shar_list:$(date +%Y%m%d)
-          docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/opaonio:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/shar_list:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/opaonio:$(date +%Y%m%d)
+          docker tag ${{ secrets.DOCKER_USERNAME }}/opaonio:$(date +%Y%m%d) ${{ secrets.DOCKER_USERNAME }}/opaonio:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/opaonio:latest
