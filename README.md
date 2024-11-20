@@ -32,8 +32,7 @@ chatnio:
 #### *"Chat Nio > [Next Web](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web) + [One API](https://github.com/songquanpeng/one-api)"*
 
 
-English · [简体中文](./README_zh-CN.md) · [Official Website](https://chatnio.com) · [Community](https://chatnio.com/guide/#%F0%9F%9B%A0%EF%B8%8F-%E7%A7%81%E6%9C%89%E5%8C%96%E9%83%A8%E7%BD%B2) · [Developer Resources](https://chatnio.com/developers)
-
+English · [简体中文](./README_zh-CN.md) · [Docs](https://chatnio.com) · [Discord](https://discord.gg/rpzNSmqaF2) · [Deployment Guide](https://chatnio.com/docs/deploy)
 
 [![Deploy on Zeabur](https://zeabur.com/button.svg)](https://zeabur.com/templates/M86XJI)
 
@@ -119,6 +118,16 @@ English · [简体中文](./README_zh-CN.md) · [Official Website](https://chatn
 > Zeabur provides a certain free quota, you can use non-paid regions for one-click deployment, and also supports plan subscriptions and elastic billing for flexible expansion.
 > 1. Click `Deploy` to deploy, and enter the domain name you wish to bind, wait for the deployment to complete.
 > 2. After deployment is complete, please visit your domain name and log in to the backend management using the username `root` and password `chatnio123456`. Please follow the prompts to change the password in the chatnio backend in a timely manner.
+
+### 🐳 BTPanel (One-Click)
+
+1. Install Baota Panel by visiting [BTPanel](https://www.bt.cn/new/download.html) and install using the stable version script.
+2. Log in to the panel and click **Docker** on the left to enter Docker management.
+3. If prompted that Docker / Docker Compose is not installed, you can install according to the guide above.
+4. After installation is complete, enter **App Store**, search for `CoAI` and click **Install**.
+5. Configure basic application information such as your domain name, port, etc., and click **Confirm** (default configuration can be used).
+6. First-time installation may take 1-2 minutes to complete database initialization. If you encounter issues, please check the panel running logs for troubleshooting.
+7. Visit your configured domain or server `http://[ip]:[port]`, log in to the backend management using username `root` and password `chatnio123456`.
 
 ### ⚡ Docker Compose Installation (Recommended)
 > [!NOTE]

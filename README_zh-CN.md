@@ -8,7 +8,7 @@
 #### *“ Chat Nio > [Next Web](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web) + [One API](https://github.com/songquanpeng/one-api) ”*
 
 
-[English](./README.md) · 简体中文 · [官网](https://chatnio.com) · [社区](https://chatnio.com/guide/#%F0%9F%9B%A0%EF%B8%8F-%E7%A7%81%E6%9C%89%E5%8C%96%E9%83%A8%E7%BD%B2) · [开发者资源](https://chatnio.com/developers)
+[English](./README.md) · 简体中文 · [文档](https://chatnio.com) · [Discord](https://discord.gg/rpzNSmqaF2) · [部署文档](https://chatnio.com/docs/deploy)
 
 
 [![Deploy on Zeabur](https://zeabur.com/button.svg)](https://zeabur.com/templates/M86XJI)
@@ -94,6 +94,16 @@
 > Zeabur 提供一定的免费额度, 可以使用非付费区域进行一键部署，同时也支持计划订阅和弹性计费等方式弹性扩展。
 > 1. 点击 `Deploy` 进行部署, 并输入你希望绑定的域名，等待部署完成。
 > 2. 部署完成后, 请访问你的域名, 并使用用户名 `root` 密码 `chatnio123456` 登录后台管理，请按照提示在 chatnio 后台及时修改密码。
+
+### 🐳 宝塔面板 (一键部署)
+
+1. 安装宝塔面板，前往 [宝塔面板官网](https://www.bt.cn/new/download.html) 进行安装，选择正式版脚本安装。
+2. 登录面板，点击左侧 **Docker** 进入 Docker 管理。
+3. 如提示未安装 Docker / Docker Compose， 可根据上方引导安装。
+4. 安装完成后，进入 **应用商城**，搜索 `CoAI` 并点击 **安装**。
+5. 配置应用基本信息，如您的域名，端口等配置，并点击 **确认** (可使用默认配置)。
+6. 首次安装可能需要等待 1-2 分钟完成数据库初始化。如遇到问题，请查看面板运行日志进行排查。
+7. 访问您配置的域名或服务器 `http://[ip]:[port]`，使用用户名 `root` 和密码 `chatnio123456` 登录后台管理。
 
 
 ### ⚡ Docker Compose 安装 (推荐)
