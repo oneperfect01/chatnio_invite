@@ -25,6 +25,7 @@ const (
 	MidjourneyChannelType  = "midjourney"
 	MoonshotChannelType    = "moonshot"
 	GroqChannelType        = "groq"
+	DeepseekChannelType    = "deepseek"
 )
 
 const (

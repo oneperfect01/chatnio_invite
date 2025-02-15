@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import { useEffectAsync } from "@/utils/hook.ts";
 import {
-  Logger,
+  type Logger,
   listLoggers,
   downloadLogger,
   deleteLogger,

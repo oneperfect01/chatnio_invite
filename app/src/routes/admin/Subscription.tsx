@@ -9,7 +9,7 @@ import { useMemo, useReducer, useState } from "react";
 import {
   getExternalPlanConfig,
   getPlanConfig,
-  PlanConfig,
+  type PlanConfig,
   setPlanConfig,
 } from "@/admin/api/plan.ts";
 import { useEffectAsync } from "@/utils/hook.ts";

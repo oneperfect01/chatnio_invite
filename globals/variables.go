@@ -133,6 +133,8 @@ const (
 	SkylarkPlus           = "skylark-plus-public"
 	SkylarkPro            = "skylark-pro-public"
 	SkylarkChat           = "skylark-chat"
+	DeepseekV3            = "deepseek-chat"
+	DeepseekR1            = "deepseek-reasoner"
 )
 
 var OpenAIDalleModels = []string{

@@ -5,8 +5,9 @@ import (
 	"chat/adapter/baichuan"
 	"chat/adapter/bing"
 	"chat/adapter/claude"
-	"chat/adapter/common"
+	adaptercommon "chat/adapter/common"
 	"chat/adapter/dashscope"
+	"chat/adapter/deepseek"
 	"chat/adapter/hunyuan"
 	"chat/adapter/midjourney"
 	"chat/adapter/openai"
@@ -35,6 +36,7 @@ var channelFactories = map[string]adaptercommon.FactoryCreator{
 	globals.SkylarkChannelType:     skylark.NewChatInstanceFromConfig,
 	globals.ZhinaoChannelType:      zhinao.NewChatInstanceFromConfig,
 	globals.MidjourneyChannelType:  midjourney.NewChatInstanceFromConfig,
+	globals.DeepseekChannelType:    deepseek.NewChatInstanceFromConfig,
 
 	globals.MoonshotChannelType: openai.NewChatInstanceFromConfig, // openai format
 	globals.GroqChannelType:     openai.NewChatInstanceFromConfig, // openai format

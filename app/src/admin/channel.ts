@@ -66,6 +66,7 @@ export const ChannelTypes: Record<string, string> = {
   groq: "Groq Cloud",
   bing: "New Bing",
   slack: "Slack Claude",
+  deepseek: "深度求索 DeepSeek",
 };
 
 export const ShortChannelTypes: Record<string, string> = {
@@ -85,6 +86,7 @@ export const ShortChannelTypes: Record<string, string> = {
   groq: "Groq",
   bing: "Bing",
   slack: "Slack",
+  deepseek: "深度求索",
 };
 
 export const ChannelInfos: Record<string, ChannelInfo> = {
@@ -225,7 +227,7 @@ export const ChannelInfos: Record<string, ChannelInfo> = {
     models: ["baichuan-53b"],
   },
   skylark: {
-    endpoint: "https://maas-api.ml-platform-cn-beijing.volces.com",
+    endpoint: "https://ark.cn-beijing.volces.com/api/v3",
     format: "<access-key>|<secret-key>",
     models: [
       "skylark-lite-public",
@@ -234,8 +236,8 @@ export const ChannelInfos: Record<string, ChannelInfo> = {
       "skylark-chat",
     ],
     description:
-      "> Skylark 格式密钥请填写获取到的 ak|sk \n" +
-      "> 接入点填写生成的接入点，如 *https://maas-api.ml-platform-cn-beijing.volces.com* \n" +
+      "> Skylark 格式密钥请填写获取到的 ak|sk 或 apikey \n" +
+      "> 接入点填写生成的接入点，如 *https://ark.cn-beijing.volces.com/api/v3* \n" +
       "> Skylark API 的地域字段无需手动填写，系统会自动根据接入点获取 \n",
   },
   bing: {
