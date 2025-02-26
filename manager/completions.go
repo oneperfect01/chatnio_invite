@@ -28,7 +28,7 @@ func NativeChatHandler(c *gin.Context, user *auth.User, model string, message []
 
 	db := utils.GetDBFromContext(c)
 	cache := utils.GetCacheFromContext(c)
-	check, plan := auth.CanEnableModelWithSubscription(db, cache, user, model)
+	check, plan := auth.CanEnableModelWithSubscription(db, cache, user, model, segment)
 
 	if check != nil {
 		return check.Error(), 0

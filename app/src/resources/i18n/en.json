@@ -117,7 +117,8 @@
       "title": "Title",
       "time": "Time",
       "message": "Message"
-    }
+    },
+    "thinking-process": "Process of thinking"
   },
   "quota-description": "spending quota for the message",
   "buy": {

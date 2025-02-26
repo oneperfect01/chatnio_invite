@@ -96,7 +96,7 @@ func checkCode(c *gin.Context, cache *redis.Client, email, code string) bool {
 		return false
 	}
 
-	cache.Del(c, fmt.Sprintf("nio:top:%s", email))
+	cache.Del(c, fmt.Sprintf("nio:otp:%s", email))
 	return true
 }
 

@@ -131,16 +131,17 @@ function SelectGroupMobile(props: SelectGroupProps) {
           props.onChange?.(value);
         }}
       >
-        <SelectTrigger className="select-group mobile whitespace-nowrap flex-nowrap">
+        <SelectTrigger className="select-group mobile whitespace-nowrap flex-nowrap touch-manipulation">
           <SelectValue placeholder={props.current?.value || ""} />
         </SelectTrigger>
         <SelectContent
-          className={`${props.className} ${props.classNameMobile}`}
+          className={`${props.className} ${props.classNameMobile} touch-manipulation`}
         >
           {props.selectGroupTop && (
             <SelectItem
               value={props.selectGroupTop.name}
               onClick={() => props.onChange?.(props.selectGroupTop!.name)}
+              className="touch-manipulation"
             >
               <GroupSelectItem {...props.selectGroupTop} />
             </SelectItem>
@@ -148,7 +149,7 @@ function SelectGroupMobile(props: SelectGroupProps) {
 
           {props.list.map((select: SelectItemProps, idx: number) => (
             <SelectItem
-              className={`whitespace-nowrap`}
+              className={`whitespace-nowrap touch-manipulation`}
               key={idx}
               value={select.name}
             >
@@ -160,6 +161,7 @@ function SelectGroupMobile(props: SelectGroupProps) {
             <SelectItem
               value={props.selectGroupBottom.name}
               onClick={() => props.onChange?.(props.selectGroupBottom!.name)}
+              className="touch-manipulation"
             >
               <GroupSelectItem {...props.selectGroupBottom} />
             </SelectItem>

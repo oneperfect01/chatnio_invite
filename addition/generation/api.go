@@ -5,8 +5,9 @@ import (
 	"chat/globals"
 	"chat/utils"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 type WebsocketGenerationForm struct {
@@ -53,7 +54,7 @@ func GenerateAPI(c *gin.Context) {
 		return
 	}
 
-	check, plan := auth.CanEnableModelWithSubscription(db, cache, user, form.Model)
+	check, plan := auth.CanEnableModelWithSubscription(db, cache, user, form.Model, []globals.Message{})
 	if check != nil {
 		conn.Send(globals.GenerationSegmentResponse{
 			Message: check.Error(),

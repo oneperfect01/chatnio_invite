@@ -202,7 +202,7 @@ func ChatHandler(conn *Connection, user *auth.User, instance *conversation.Conve
 	model := instance.GetModel()
 	segment := adapter.ClearMessages(model, web.ToChatSearched(instance, restart))
 
-	check, plan := auth.CanEnableModelWithSubscription(db, cache, user, model)
+	check, plan := auth.CanEnableModelWithSubscription(db, cache, user, model, segment)
 	conn.Send(globals.ChatSegmentResponse{
 		Conversation: instance.GetId(),
 	})

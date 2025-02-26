@@ -117,7 +117,8 @@
       "title": "タイトル",
       "time": "期日",
       "message": "メッセージ"
-    }
+    },
+    "thinking-process": "思考プロセス"
   },
   "quota-description": "メッセージのクレジット使用額",
   "buy": {

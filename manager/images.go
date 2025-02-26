@@ -54,7 +54,7 @@ func ImagesRelayAPI(c *gin.Context) {
 		form.Model = strings.TrimSuffix(form.Model, "-official")
 	}
 
-	check := auth.CanEnableModel(db, user, form.Model)
+	check := auth.CanEnableModel(db, user, form.Model, []globals.Message{})
 	if check != nil {
 		sendErrorResponse(c, check, "quota_exceeded_error")
 		return

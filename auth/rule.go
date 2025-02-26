@@ -4,6 +4,10 @@ import (
 	"chat/channel"
 	"database/sql"
 	"fmt"
+
+	"chat/globals"
+	"chat/utils"
+
 	"github.com/go-redis/redis/v8"
 )
 
@@ -11,10 +15,11 @@ const (
 	ErrNotAuthenticated = "not authenticated error (model: %s)"
 	ErrNotSetPrice      = "the price of the model is not set (model: %s)"
 	ErrNotEnoughQuota   = "user quota is not enough error (model: %s, minimum quota: %0.2f, your quota: %0.2f)"
+	ErrEstimatedCost    = "estimated cost exceeds user quota (model: %s, estimated cost: %0.2f, your quota: %0.2f)"
 )
 
 // CanEnableModel returns whether the model can be enabled (without subscription)
-func CanEnableModel(db *sql.DB, user *User, model string) error {
+func CanEnableModel(db *sql.DB, user *User, model string, messages []globals.Message) error {
 	isAuth := user != nil
 	isAdmin := isAuth && user.IsAdmin(db)
 
@@ -37,21 +42,23 @@ func CanEnableModel(db *sql.DB, user *User, model string) error {
 		return fmt.Errorf(ErrNotAuthenticated, model)
 	}
 
-	// return if the user is authenticated and has enough quota
-	limit := charge.GetLimit()
+	// Calculate estimated input cost
+	inputTokens := utils.NumTokensFromMessages(messages, model, false)
+	estimatedInputCost := float32(inputTokens) / 1000 * charge.GetInput()
 
+	// Get user's current quota
 	quota := user.GetQuota(db)
-	if quota < limit {
-		return fmt.Errorf(ErrNotEnoughQuota, model, limit, quota)
+	if quota < estimatedInputCost {
+		return fmt.Errorf(ErrEstimatedCost, model, estimatedInputCost, quota)
 	}
 
 	return nil
 }
 
-func CanEnableModelWithSubscription(db *sql.DB, cache *redis.Client, user *User, model string) (canEnable error, usePlan bool) {
+func CanEnableModelWithSubscription(db *sql.DB, cache *redis.Client, user *User, model string, messages []globals.Message) (canEnable error, usePlan bool) {
 	// use subscription quota first
 	if user != nil && HandleSubscriptionUsage(db, cache, user, model) {
 		return nil, true
 	}
-	return CanEnableModel(db, user, model), false
+	return CanEnableModel(db, user, model, messages), false
 }

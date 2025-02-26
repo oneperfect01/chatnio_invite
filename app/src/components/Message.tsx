@@ -19,7 +19,6 @@ import {
   copyClipboard,
   isContainDom,
   saveAsFile,
-  useInputValue,
 } from "@/utils/dom.ts";
 import { useTranslation } from "react-i18next";
 import React, { Ref, useRef, useState } from "react";
@@ -35,6 +34,7 @@ import Avatar from "@/components/Avatar.tsx";
 import { useSelector } from "react-redux";
 import { selectUsername } from "@/store/auth.ts";
 import { appLogo } from "@/conf/env.ts";
+import { ThinkContent } from "@/components/ThinkContent";
 
 type MessageProps = {
   index: number;
@@ -180,7 +180,13 @@ function MessageMenu({
           {t("message.copy")}
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => useInputValue("input", filterMessage(message.content))}
+          onClick={() => {
+            const input = document.getElementById("input") as HTMLInputElement;
+            if (input) {
+              input.value = filterMessage(message.content);
+              input.focus();
+            }
+          }}
         >
           <MousePointerSquare className={`h-4 w-4 mr-1.5`} />
           {t("message.use")}
@@ -223,11 +229,33 @@ function MessageContent({
   username,
 }: MessageProps) {
   const isUser = message.role === "user";
-
   const user = useSelector(selectUsername);
 
   const [open, setOpen] = useState(false);
   const [editedMessage, setEditedMessage] = useState<string | undefined>("");
+
+  // parse think content
+  const parseThinkContent = (content: string) => {
+    if (message.role !== "assistant") return null;
+    
+    const startMatch = content.match(/<think>\n?(.*?)(?:<\/think>|$)/s);
+    if (startMatch) {
+      const thinkContent = startMatch[1];
+      const hasEndTag = content.includes('</think>');
+      const restContent = hasEndTag ? 
+        content.replace(startMatch[0], "").trim() :
+        content.substring(content.indexOf('<think>') + 7).trim();
+      
+      return {
+        thinkContent,
+        restContent: hasEndTag ? restContent : '',
+        isComplete: hasEndTag
+      };
+    }
+    return null;
+  };
+
+  const parsedContent = message.content.length ? parseThinkContent(message.content) : null;
 
   return (
     <div className={"content-wrapper"}>
@@ -274,11 +302,29 @@ function MessageContent({
       </div>
       <div className={`message-content`}>
         {message.content.length ? (
-          <Markdown
-            loading={message.end === false}
-            children={message.content}
-            acceptHtml={false}
-          />
+          <>
+            {parsedContent ? (
+              <>
+                <ThinkContent 
+                  content={parsedContent.thinkContent} 
+                  isComplete={parsedContent.isComplete}
+                />
+                {parsedContent.restContent && (
+                  <Markdown
+                    loading={message.end === false}
+                    children={parsedContent.restContent}
+                    acceptHtml={false}
+                  />
+                )}
+              </>
+            ) : (
+              <Markdown
+                loading={message.end === false}
+                children={message.content}
+                acceptHtml={false}
+              />
+            )}
+          </>
         ) : message.end === true ? (
           <CircleSlash className={`h-5 w-5 m-1`} />
         ) : (

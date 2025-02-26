@@ -164,6 +164,7 @@
     "remove": "删除消息",
     "restart": "重新回答",
     "copy-area": "复制选中区域",
+    "thinking-process": "思考过程",
     "saving-image-prompt": "图片生成中",
     "saving-image-prompt-desc": "正在生成图片中，请稍等...",
     "saving-image-failed": "图片生成失败",

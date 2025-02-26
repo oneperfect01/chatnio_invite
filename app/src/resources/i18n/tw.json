@@ -174,7 +174,8 @@
       "title": "標題",
       "time": "時間",
       "message": "訊息"
-    }
+    },
+    "thinking-process": "思考過程"
   },
   "quota-description": "訊息的點數支出",
   "buy": {
