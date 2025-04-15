@@ -67,6 +67,7 @@ export const ChannelTypes: Record<string, string> = {
   bing: "New Bing",
   slack: "Slack Claude",
   deepseek: "深度求索 DeepSeek",
+  dify: "Dify",
 };
 
 export const ShortChannelTypes: Record<string, string> = {
@@ -87,6 +88,7 @@ export const ShortChannelTypes: Record<string, string> = {
   bing: "Bing",
   slack: "Slack",
   deepseek: "深度求索",
+  dify: "Dify",
 };
 
 export const ChannelInfos: Record<string, ChannelInfo> = {
@@ -285,6 +287,15 @@ export const ChannelInfos: Record<string, ChannelInfo> = {
     endpoint: "https://api.groq.com/openai",
     format: "<api-key>",
     models: ["llama2-70b-4096", "mixtral-8x7b-32768", "gemma-7b-it"],
+  },
+  dify: {
+    endpoint: "https://api.dify.ai/v1",
+    format: "<api-key>",
+    models: [""],
+    description:
+      "> 由于 Dify 平台一个 Key 对应一个 CHATFLOW （模型），所以模型名称仅在用户调用本系统时用于标识用户调用的对象，不代表调用 Dify 平台 CHATFLOW 时被调用 CHATFLOW 的名称 \n" +
+      "> 因此，您需要为每一个 Dify 平台的 CHATFLOW 分别创建渠道 \n" +
+      "> 如果需要让系统自动适配 Dify 平台的图标（商业版 / Pro），请将模型名称填写为 **dify** 开头的模型，如 **dify-chat** \n",
   },
 };
 

@@ -4,14 +4,20 @@ import (
 	adaptercommon "chat/adapter/common"
 	"chat/globals"
 	"chat/utils"
+	"errors"
 	"fmt"
+	"strings"
 )
 
 var geminiMaxImages = 16
 
-func (c *ChatInstance) GetChatEndpoint(model string) string {
+func (c *ChatInstance) GetChatEndpoint(model string, stream bool) string {
 	if model == globals.ChatBison001 {
 		return fmt.Sprintf("%s/v1beta2/models/%s:generateMessage?key=%s", c.Endpoint, model, c.ApiKey)
+	}
+
+	if stream {
+		return fmt.Sprintf("%s/v1beta/models/%s:streamGenerateContent?alt=sse&key=%s", c.Endpoint, model, c.ApiKey)
 	}
 
 	return fmt.Sprintf("%s/v1beta/models/%s:generateContent?key=%s", c.Endpoint, model, c.ApiKey)
@@ -88,7 +94,7 @@ func (c *ChatInstance) GetGeminiChatResponse(data interface{}) (string, error) {
 }
 
 func (c *ChatInstance) CreateChatRequest(props *adaptercommon.ChatProps) (string, error) {
-	uri := c.GetChatEndpoint(props.Model)
+	uri := c.GetChatEndpoint(props.Model, false)
 
 	if props.Model == globals.ChatBison001 {
 		data, err := utils.Post(uri, map[string]string{
@@ -112,18 +118,89 @@ func (c *ChatInstance) CreateChatRequest(props *adaptercommon.ChatProps) (string
 	return c.GetGeminiChatResponse(data)
 }
 
-// CreateStreamChatRequest is the mock stream request for palm2
-// tips: palm2 does not support stream request
+// CreateStreamChatRequest is the stream request for palm2
 func (c *ChatInstance) CreateStreamChatRequest(props *adaptercommon.ChatProps, callback globals.Hook) error {
-	response, err := c.CreateChatRequest(props)
-	if err != nil {
-		return err
-	}
-
-	for _, item := range utils.SplitItem(response, " ") {
-		if err := callback(&globals.Chunk{Content: item}); err != nil {
+	// Handle imagen models
+	if globals.IsGoogleImagenModel(props.Model) {
+		response, err := c.CreateImage(props)
+		if err != nil {
 			return err
 		}
+		return callback(&globals.Chunk{Content: response})
 	}
+
+	// Handle chat models
+	if props.Model == globals.ChatBison001 {
+		response, err := c.CreateChatRequest(props)
+		if err != nil {
+			return err
+		}
+
+		for _, item := range utils.SplitItem(response, " ") {
+			if err := callback(&globals.Chunk{Content: item}); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
+	ticks := 0
+	scanErr := utils.EventScanner(&utils.EventScannerProps{
+		Method: "POST",
+		Uri:    c.GetChatEndpoint(props.Model, true),
+		Headers: map[string]string{
+			"Content-Type": "application/json",
+		},
+		Body: c.GetGeminiChatBody(props),
+		Callback: func(data string) error {
+			ticks += 1
+
+			if form := utils.UnmarshalForm[GeminiStreamResponse](data); form != nil {
+				if len(form.Candidates) != 0 && len(form.Candidates[0].Content.Parts) != 0 {
+					return callback(&globals.Chunk{
+						Content: form.Candidates[0].Content.Parts[0].Text,
+					})
+				}
+				return nil
+			}
+
+			if form := utils.UnmarshalForm[GeminiChatErrorResponse](data); form != nil {
+				return fmt.Errorf("gemini error: %s (code: %d, status: %s)", form.Error.Message, form.Error.Code, form.Error.Status)
+			}
+
+			return nil
+		},
+	}, props.Proxy)
+
+	if scanErr != nil {
+		if scanErr.Error != nil && strings.Contains(scanErr.Error.Error(), "status code: 404") {
+			// downgrade to non-stream request
+			response, err := c.CreateChatRequest(props)
+			if err != nil {
+				return err
+			}
+			return callback(&globals.Chunk{Content: response})
+		}
+
+		if scanErr.Body != "" {
+			if form := utils.UnmarshalForm[GeminiChatErrorResponse](scanErr.Body); form != nil {
+				return fmt.Errorf("gemini error: %s (code: %d, status: %s)", form.Error.Message, form.Error.Code, form.Error.Status)
+			}
+			return fmt.Errorf("gemini error: %s", scanErr.Body)
+		}
+		return fmt.Errorf("gemini error: %v", scanErr.Error)
+	}
+
+	if ticks == 0 {
+		return errors.New("no response")
+	}
+
 	return nil
+}
+
+func (c *ChatInstance) GetLatestPrompt(props *adaptercommon.ChatProps) string {
+	if len(props.Message) == 0 {
+		return ""
+	}
+	return props.Message[len(props.Message)-1].Content
 }

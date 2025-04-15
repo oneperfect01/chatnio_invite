@@ -70,3 +70,40 @@ type GeminiChatErrorResponse struct {
 		Status  string `json:"status"`
 	} `json:"error"`
 }
+
+type GeminiStreamResponse struct {
+	Candidates []struct {
+		Content struct {
+			Parts []struct {
+				Text string `json:"text"`
+			} `json:"parts"`
+			Role string `json:"role"`
+		} `json:"content"`
+	} `json:"candidates"`
+}
+
+// ImageRequest is the native http request body for imagen
+type ImageRequest struct {
+	Instances  []ImageInstance `json:"instances"`
+	Parameters ImageParameters `json:"parameters"`
+}
+
+type ImageInstance struct {
+	Prompt string `json:"prompt"`
+}
+
+type ImageParameters struct {
+	SampleCount      int    `json:"sampleCount,omitempty"`
+	AspectRatio      string `json:"aspectRatio,omitempty"`
+	PersonGeneration string `json:"personGeneration,omitempty"`
+}
+
+// ImageResponse is the native http response body for imagen
+type ImageResponse struct {
+	Predictions []ImagePrediction `json:"predictions"`
+}
+
+type ImagePrediction struct {
+	MimeType           string `json:"mimeType"`
+	BytesBase64Encoded string `json:"bytesBase64Encoded"`
+}

@@ -26,6 +26,7 @@ const (
 	MoonshotChannelType    = "moonshot"
 	GroqChannelType        = "groq"
 	DeepseekChannelType    = "deepseek"
+	DifyChannelType        = "dify"
 )
 
 const (

@@ -78,6 +78,9 @@ export const modelColorMapper: Record<string, string> = {
   doubao: "sky-300",
   coze: "sky-300",
 
+  // Dify
+  dify: "gray-300",
+
   // OpenRouter
   openrouter: "purple-600",
 };
