@@ -147,6 +147,24 @@ func GetImageMarkdown(url string) string {
 	return fmt.Sprintf("![image](%s)", url)
 }
 
+func GetBase64ImageMarkdown(b64 string, _desc ...string) string {
+	// Extracts the image type from base64 string (e.g., "data:image/png;base64,...") or defaults to png
+	var imageType = "png"
+	if strings.HasPrefix(b64, "data:image/") {
+		parts := strings.Split(b64[11:], ";")
+		if len(parts) > 0 {
+			imageType = parts[0]
+		}
+	}
+
+	desc := "image"
+	if len(_desc) > 0 && _desc[0] != "" {
+		desc = _desc[0]
+	}
+
+	return fmt.Sprintf("![%s](data:image/%s;base64,%s)", desc, imageType, b64)
+}
+
 // SplitItem is the split function for strings.Split
 // e.g.
 // SplitItem("a,b,c", ",") => ["a,", "b,", "c"]
@@ -228,6 +246,21 @@ func ExtractImagesFromMarkdown(data string) (images []string) {
 
 	for _, match := range matches {
 		images = append(images, match[1])
+	}
+
+	return images
+}
+
+func ExtractBase64FromMarkdown(data string) (images []string) {
+	// extract base64 images like `![image](data:image/png;base64,xxxxxx)`
+	re := regexp.MustCompile(`!\[.*?\]\((data:image/\w+;base64,[\w+/=]+)\)`)
+	matches := re.FindAllStringSubmatch(data, -1)
+
+	for _, match := range matches {
+		// We only need the base64 data part
+		if len(match) > 1 {
+			images = append(images, match[1])
+		}
 	}
 
 	return images

@@ -106,63 +106,37 @@ export const useTheme = () => {
 };
 
 export function ModeToggle() {
-  const { theme, toggleTheme } = useTheme();
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [currentIconIndex, setCurrentIconIndex] = useState(0);
-
-  const icons = [
-    <Moon key="dark" className="h-[1.2rem] w-[1.2rem]" />,
-    <Sun key="light" className="h-[1.2rem] w-[1.2rem]" />,
-    <Monitor key="system" className="h-[1.2rem] w-[1.2rem]" />,
-  ];
- 
-
+  const { toggleTheme } = useTheme();
+  const [systemMode, setSystemMode] = useState(false);
+  
   useEffect(() => {
-    const savedTheme = getTheme();
-    const index = icons.findIndex(icon => icon.key === savedTheme);
-
-    setCurrentIconIndex(index);
-  }, [theme]);
+    const currentTheme = getTheme();
+    setSystemMode(currentTheme === "system");
+  }, []);
 
   const handleClick = () => {
-    if (isAnimating) return; // 防止重复点击
-    setIsAnimating(true);
-
-
     toggleTheme?.();
 
-    setTimeout(() => {
-
-      const nextIconIndex = (currentIconIndex + 1) % icons.length;
-
-      setCurrentIconIndex(nextIconIndex);
-      setIsAnimating(false);
-    }, 500);
+    const newTheme = getTheme();
+    setSystemMode(newTheme === "system");
   };
 
-  return (
-    <Button
-      variant="outline"
-      size="icon"
-      onClick={handleClick}
-      style={{
-        transition: "background-color 0.5s ease",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          transform: isAnimating ? "scale(0)" : "scale(1)",
-          transition: "transform 0.5s ease, opacity 0.5s ease",
-        }}
-      >
-        {icons[currentIconIndex]}
-      </div>
+  if (systemMode) {
+    return (
+      <Button variant="outline" size="icon" onClick={handleClick}>
+        <Monitor className="h-[1.2rem] w-[1.2rem]" />
+      </Button>
+    );
+  }
 
+  return (
+    <Button variant="outline" size="icon" onClick={handleClick}>
+      <Sun
+        className={`relative dark:absolute h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0`}
+      />
+      <Moon
+        className={`absolute dark:relative h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100`}
+      />
     </Button>
   );
 }
-
-export default ModeToggle;

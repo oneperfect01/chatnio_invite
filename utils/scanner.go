@@ -17,6 +17,7 @@ type EventScannerProps struct {
 	Headers  map[string]string
 	Body     interface{}
 	Callback func(string) error
+	FullSSE  bool
 }
 
 type EventScannerError struct {
@@ -85,7 +86,89 @@ func EventScanner(props *EventScannerProps, config ...globals.ProxyConfig) *Even
 		}
 	}
 
-	scanner := bufio.NewScanner(resp.Body)
+	if props.FullSSE {
+		return processFullSSE(resp.Body, props.Callback)
+	}
+
+	return processLegacySSE(resp.Body, props.Callback)
+}
+
+func processFullSSE(body io.ReadCloser, callback func(string) error) *EventScannerError {
+	scanner := bufio.NewScanner(body)
+	var eventType, eventData string
+	var buffer strings.Builder
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if len(strings.TrimSpace(line)) == 0 {
+			if eventData != "" {
+				if eventType != "" {
+					buffer.WriteString("event: ")
+					buffer.WriteString(eventType)
+					buffer.WriteString("\n")
+				}
+				buffer.WriteString("data: ")
+				buffer.WriteString(eventData)
+
+				eventStr := buffer.String()
+				if globals.DebugMode {
+					globals.Debug(fmt.Sprintf("[sse-full] event: %s", eventStr))
+				}
+
+				if err := callback(eventStr); err != nil {
+					err := body.Close()
+					if err != nil {
+						globals.Debug(fmt.Sprintf("[sse] event source close error: %s", err.Error()))
+					}
+					return &EventScannerError{Error: err}
+				}
+
+				eventType = ""
+				eventData = ""
+				buffer.Reset()
+			}
+			continue
+		}
+
+		if strings.HasPrefix(line, "event:") {
+			eventType = strings.TrimSpace(strings.TrimPrefix(line, "event:"))
+			continue
+		}
+
+		if strings.HasPrefix(line, "data:") {
+			eventData = strings.TrimSpace(strings.TrimPrefix(line, "data:"))
+
+			if eventData == "[DONE]" || strings.HasPrefix(eventData, "[DONE]") {
+				continue
+			}
+		}
+	}
+
+	if eventData != "" {
+		if eventType != "" {
+			buffer.WriteString("event: ")
+			buffer.WriteString(eventType)
+			buffer.WriteString("\n")
+		}
+		buffer.WriteString("data: ")
+		buffer.WriteString(eventData)
+
+		eventStr := buffer.String()
+		if globals.DebugMode {
+			globals.Debug(fmt.Sprintf("[sse-full] last event: %s", eventStr))
+		}
+
+		if err := callback(eventStr); err != nil {
+			return &EventScannerError{Error: err}
+		}
+	}
+
+	return nil
+}
+
+func processLegacySSE(body io.ReadCloser, callback func(string) error) *EventScannerError {
+	scanner := bufio.NewScanner(body)
 	scanner.Split(func(data []byte, atEOF bool) (advance int, token []byte, err error) {
 		if atEOF && len(data) == 0 {
 			// when EOF and empty data
@@ -125,9 +208,9 @@ func EventScanner(props *EventScannerProps, config ...globals.ProxyConfig) *Even
 		}
 
 		// callback chunk
-		if err := props.Callback(chunk); err != nil {
+		if err := callback(chunk); err != nil {
 			// break connection on callback error
-			err := resp.Body.Close()
+			err := body.Close()
 			if err != nil {
 				globals.Debug(fmt.Sprintf("[sse] event source close error: %s", err.Error()))
 			}

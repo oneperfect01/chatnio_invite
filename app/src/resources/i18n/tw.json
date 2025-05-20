@@ -780,7 +780,14 @@
       "title": "服務日誌",
       "console": "控制台",
       "consoleLength": "日誌數量"
-    }
+    },
+    "join-community": "🎉 加入社區",
+    "community-description": "🥳 我們在Discord 創建了一個新的用戶交流社區，您現在可以加入我們的Discord 社群與我們進行交流與回饋，或是獲取專案的最新動態！ 🥳",
+    "community-join-button": "加入我們",
+    "community-confirm-close": "您確定要關閉此公告嗎？",
+    "community-banner-confirm": "您真的不考慮加入社區與我們一起共建項目或是獲取項目的更新與動態嗎？該橫幅在不清除瀏覽器快取的情況下僅會顯示一次",
+    "community-stay": "加入我們",
+    "community-close": "確認關閉"
   },
   "mask": {
     "title": "預設設定",

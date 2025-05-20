@@ -68,6 +68,7 @@ export const ChannelTypes: Record<string, string> = {
   slack: "Slack Claude",
   deepseek: "深度求索 DeepSeek",
   dify: "Dify",
+  coze: "扣子 Coze",
 };
 
 export const ShortChannelTypes: Record<string, string> = {
@@ -89,6 +90,7 @@ export const ShortChannelTypes: Record<string, string> = {
   slack: "Slack",
   deepseek: "深度求索",
   dify: "Dify",
+  coze: "Coze",
 };
 
 export const ChannelInfos: Record<string, ChannelInfo> = {
@@ -296,6 +298,17 @@ export const ChannelInfos: Record<string, ChannelInfo> = {
       "> 由于 Dify 平台一个 Key 对应一个 CHATFLOW （模型），所以模型名称仅在用户调用本系统时用于标识用户调用的对象，不代表调用 Dify 平台 CHATFLOW 时被调用 CHATFLOW 的名称 \n" +
       "> 因此，您需要为每一个 Dify 平台的 CHATFLOW 分别创建渠道 \n" +
       "> 如果需要让系统自动适配 Dify 平台的图标（商业版 / Pro），请将模型名称填写为 **dify** 开头的模型，如 **dify-chat** \n",
+  },
+  coze: {
+    endpoint: "https://api.coze.cn",
+    format: "<api-key>",
+    models: [""],
+    description:
+      "> 扣子 Coze 的模型名称即为 Coze 平台的 **bot_id** \n" +
+      "> 进入智能体的开发页面，开发页面 URL 中 bot 参数后的数字就是智能体 ID \n" +
+      "> 例如 [https://www.coze.cn/space/341****/bot/73428668*****](https://www.coze.cn/space/341****/bot/73428668*****)，智能体 ID 为 73428668***** \n" +
+      "> 确保当前使用的访问密钥已被授予智能体所属空间的 chat 权限 \n" +
+      "> 如果需要让系统自动适配扣子 Coze 平台的图标（商业版 / Pro），请在 **模型映射** 中将 **bot_id** 映射为 **coze** 开头的模型，如 coze-chat>73428668***** \n",
   },
 };
 

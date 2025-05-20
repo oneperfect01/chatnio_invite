@@ -724,7 +724,14 @@
     "used-at": "Collection time",
     "used-username": "Claim User",
     "is-subscribed-tips": "Subscription judgment logic: There is a subscription tier and the subscription period has not expired",
-    "expired-at": "Subscription Expiration Time"
+    "expired-at": "Subscription Expiration Time",
+    "join-community": "🎉 Join the Community",
+    "community-description": "🥳 We've created a new user community in Discord, and you can now join our Discord community to chat and give feedback, or get updates on your projects! 🥳",
+    "community-join-button": "Join Us",
+    "community-confirm-close": "Are you sure you want to close this announcement?",
+    "community-banner-confirm": "Do you really not consider joining the community to build projects with us or to get updates and updates on projects? The banner will only be displayed once without clearing the browser cache",
+    "community-stay": "Join Us",
+    "community-close": "Confirm Close"
   },
   "mask": {
     "title": "Mask Settings",

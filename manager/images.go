@@ -71,15 +71,20 @@ func getImageProps(form RelayImageForm, messages []globals.Message, buffer *util
 	}, buffer)
 }
 
-func getUrlFromBuffer(buffer *utils.Buffer) string {
+func getImageDataFromBuffer(buffer *utils.Buffer) (string, string) {
 	content := buffer.Read()
 
 	urls := utils.ExtractImagesFromMarkdown(content)
 	if len(urls) > 0 {
-		return urls[len(urls)-1]
+		return urls[len(urls)-1], ""
 	}
 
-	return ""
+	base64Data := utils.ExtractBase64FromMarkdown(content)
+	if len(base64Data) > 0 {
+		return "", base64Data[len(base64Data)-1]
+	}
+
+	return "", ""
 }
 
 func createRelayImageObject(c *gin.Context, form RelayImageForm, prompt string, created int64, user *auth.User, plan bool) {
@@ -112,8 +117,8 @@ func createRelayImageObject(c *gin.Context, form RelayImageForm, prompt string, 
 		CollectQuota(c, user, buffer, plan, err)
 	}
 
-	image := getUrlFromBuffer(buffer)
-	if image == "" {
+	url, b64Json := getImageDataFromBuffer(buffer)
+	if url == "" && b64Json == "" {
 		sendErrorResponse(c, fmt.Errorf("no image generated"), "image_generation_error")
 		return
 	}
@@ -122,7 +127,8 @@ func createRelayImageObject(c *gin.Context, form RelayImageForm, prompt string, 
 		Created: created,
 		Data: []RelayImageData{
 			{
-				Url: image,
+				Url:     url,
+				B64Json: b64Json,
 			},
 		},
 	})

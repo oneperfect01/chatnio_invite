@@ -20,36 +20,41 @@ func (c *ChatInstance) GetImageEndpoint(model string) string {
 	return fmt.Sprintf("%s/openai/deployments/%s/images/generations?api-version=%s", c.GetResource(), model, c.GetEndpoint())
 }
 
-// CreateImageRequest will create a dalle image from prompt, return url of image and error
-func (c *ChatInstance) CreateImageRequest(props ImageProps) (string, error) {
+// CreateImageRequest will create a dalle image from prompt, return url of image, base64 data and error
+func (c *ChatInstance) CreateImageRequest(props ImageProps) (string, string, error) {
 	res, err := utils.Post(
 		c.GetImageEndpoint(props.Model),
 		c.GetHeader(), ImageRequest{
 			Prompt: props.Prompt,
 			Size: utils.Multi[ImageSize](
-				props.Model == globals.Dalle3,
+				props.Model == globals.Dalle3 || props.Model == globals.GPTImage1,
 				ImageSize1024,
 				ImageSize512,
 			),
 			N: 1,
 		}, props.Proxy)
 	if err != nil || res == nil {
-		return "", fmt.Errorf("openai error: %s", err.Error())
+		return "", "", fmt.Errorf("openai error: %s", err.Error())
 	}
 
 	data := utils.MapToStruct[ImageResponse](res)
 	if data == nil {
-		return "", fmt.Errorf("openai error: cannot parse response")
+		return "", "", fmt.Errorf("openai error: cannot parse response")
 	} else if data.Error.Message != "" {
-		return "", fmt.Errorf("openai error: %s", data.Error.Message)
+		return "", "", fmt.Errorf("openai error: %s", data.Error.Message)
 	}
 
-	return data.Data[0].Url, nil
+	// for gpt-image-1, return base64 data if available
+	if props.Model == globals.GPTImage1 && data.Data[0].B64Json != "" {
+		return "", data.Data[0].B64Json, nil
+	}
+
+	return data.Data[0].Url, "", nil
 }
 
 // CreateImage will create a dalle image from prompt, return markdown of image
 func (c *ChatInstance) CreateImage(props *adaptercommon.ChatProps) (string, error) {
-	url, err := c.CreateImageRequest(ImageProps{
+	url, b64Json, err := c.CreateImageRequest(ImageProps{
 		Model:  props.Model,
 		Prompt: c.GetLatestPrompt(props),
 		Proxy:  props.Proxy,
@@ -59,6 +64,10 @@ func (c *ChatInstance) CreateImage(props *adaptercommon.ChatProps) (string, erro
 			return err.Error(), nil
 		}
 		return "", err
+	}
+
+	if b64Json != "" {
+		return utils.GetBase64ImageMarkdown(b64Json), nil
 	}
 
 	return utils.GetImageMarkdown(url), nil

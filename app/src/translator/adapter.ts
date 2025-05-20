@@ -1,6 +1,7 @@
 // format language code to name/ISO 639-1 code map
 const languageTranslatorMap: Record<string, string> = {
   cn: "zh-CN",
+  tw: "zh-TW",
   en: "en",
   ru: "ru",
   ja: "ja",

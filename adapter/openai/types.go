@@ -16,12 +16,13 @@ type MessageContent struct {
 type MessageContents []MessageContent
 
 type Message struct {
-	Role         string                `json:"role"`
-	Content      MessageContents       `json:"content"`
-	Name         *string               `json:"name,omitempty"`
-	FunctionCall *globals.FunctionCall `json:"function_call,omitempty"` // only `function` role
-	ToolCallId   *string               `json:"tool_call_id,omitempty"`  // only `tool` role
-	ToolCalls    *globals.ToolCalls    `json:"tool_calls,omitempty"`    // only `assistant` role
+	Role             string                `json:"role"`
+	Content          MessageContents       `json:"content"`
+	Name             *string               `json:"name,omitempty"`
+	FunctionCall     *globals.FunctionCall `json:"function_call,omitempty"` // only `function` role
+	ToolCallId       *string               `json:"tool_call_id,omitempty"`  // only `tool` role
+	ToolCalls        *globals.ToolCalls    `json:"tool_calls,omitempty"`    // only `assistant` role
+	ReasoningContent *string               `json:"reasoning,omitempty"`     // only for claude reasoning models
 }
 
 // ChatRequest is the request body for openai
@@ -107,7 +108,8 @@ type ImageRequest struct {
 
 type ImageResponse struct {
 	Data []struct {
-		Url string `json:"url"`
+		Url     string `json:"url,omitempty"`
+		B64Json string `json:"b64_json,omitempty"`
 	} `json:"data"`
 	Error struct {
 		Message string `json:"message"`

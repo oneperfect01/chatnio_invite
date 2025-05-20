@@ -12,7 +12,7 @@ import {useState, useEffect } from "react";
 import { tokenField } from "@/conf/bootstrap.ts";
 import { toggleMenu } from "@/store/menu.ts";
 import ProjectLink from "@/components/ProjectLink.tsx";
-import ModeToggle from "@/components/ThemeProvider.tsx";
+import { ModeToggle } from "@/components/ThemeProvider.tsx";
 import router from "@/router.tsx";
 import MenuBar from "./MenuBar.tsx";
 import { getMemory } from "@/utils/memory.ts";

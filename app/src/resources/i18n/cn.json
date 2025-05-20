@@ -507,6 +507,13 @@
     "default-password": "密码修改提示",
     "default-password-prompt": "您的管理员密码为默认密码，为了您的账号安全，请尽快修改密码。（前往后台管理 - 系统设置 - 修改 Root 密码）",
     "chatnio-format-only": "此格式为 Chat Nio 独有格式",
+    "join-community": "🎉 加入社区",
+    "community-description": "🥳 我们在 Discord 创建了新的用户交流社区，您现在可以加入我们的 Discord 社区与我们进行交流与反馈，或是获取项目的最新动态！ 🥳",
+    "community-join-button": "加入我们",
+    "community-confirm-close": "您确定要关闭此公告吗？",
+    "community-banner-confirm": "您真的不考虑加入社区与我们一起共建项目或是获取项目的更新与动态吗？该横幅在不清除浏览器缓存的情况下仅会显示一次",
+    "community-stay": "加入我们",
+    "community-close": "确认关闭",
     "identity": {
       "normal": "普通用户",
       "api_paid": "其他付费用户",
