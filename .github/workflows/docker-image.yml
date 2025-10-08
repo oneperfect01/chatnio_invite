@@ -1,17 +1,12 @@
 name: Docker Image CI
 
 on:
-  # 手动触发
   workflow_dispatch:
     inputs:
       push_latest:
         description: "同时推送 latest 标签"
         type: boolean
         default: true
-  # 也可打开以下触发器：push 到 main、打 tag 等（按需启用）
-  # push:
-  #   branches: ["main"]
-  #   tags: ["v*"]
 
 jobs:
   build:
@@ -25,30 +20,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 启用 QEMU（x86 机器上构建 ARM 架构会用到）
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
-      # 启用 Buildx（支持多架构构建与缓存）
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 登录 Docker Hub（需在仓库 Settings → Secrets and variables → Actions 配置）
-      # DOCKER_USERNAME：你的 Docker Hub 用户名
-      # DOCKER_PASSWORD：你的 Docker Hub 密码或 Access Token
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # 生成镜像标签和元数据（包含: latest、日期、提交 SHA、tag/semver）
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ secrets.DOCKER_USERNAME }}/opaonio
-          # 你当前脚本用的是 yyyymmdd；这里保留并增加 sha / semver / ref 等
           tags: |
             type=raw,value={{date 'YYYYMMDD'}}
             type=raw,value=latest,enable=${{ github.event.inputs.push_latest == 'true' }}
@@ -58,20 +46,19 @@ jobs:
           labels: |
             org.opencontainers.image.title=opaonio
             org.opencontainers.image.description=Multi-arch image for opaonio (amd64/arm64/arm/v7)
-            org.opencontainers.image.source=${{ github.repositoryUrl }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.created={{date 'YYYY-MM-DDTHH:mm:ssZ'}}
 
-      # 构建并推送多架构镜像（会自动创建跨架构 manifest）
-      - name: Build and push
+      - name: Build and push (multi-arch)
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
+          # 一次性产出 amd64/arm64/armv7
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # 高速缓存（减少重复构建时间）
+          # 缓存显著加速后续构建
           cache-from: type=gha
           cache-to: type=gha,mode=max
