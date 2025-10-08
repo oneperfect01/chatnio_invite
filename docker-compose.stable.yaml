@@ -1,7 +1,7 @@
-version: '3'
+version: "3"
 services:
   mysql:
-    image: mysql:latest
+    image: mysql:5.7.44
     container_name: db
     restart: always
     environment:
@@ -18,7 +18,7 @@ services:
       - chatnio-network
 
   redis:
-    image: redis:latest
+    image: redis:8.2.1
     container_name: redis
     restart: always
     expose:

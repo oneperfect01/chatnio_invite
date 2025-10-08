@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 func (c *ChatInstance) GetChatEndpoint(props *adaptercommon.ChatProps) string {
@@ -45,8 +46,8 @@ func (c *ChatInstance) GetChatBody(props *adaptercommon.ChatProps, stream bool) 
 
 	messages := formatMessages(props)
 
-	// o1, o3 compatibility
-	isNewModel := len(props.Model) >= 2 && (props.Model[:2] == "o1" || props.Model[:2] == "o3")
+	// o1, o3, gpt-5 compatibility
+	isNewModel := len(props.Model) >= 2 && (props.Model[:2] == "o1" || props.Model[:2] == "o3") || strings.HasPrefix(props.Model, "gpt-5")
 
 	var temperature *float32
 	if isNewModel {
